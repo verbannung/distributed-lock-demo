@@ -37,7 +37,7 @@ void TcpServer::setupServerSocket() {
     addr.sin_port = htons(port); // 端口号 (网络字节序)
     addr.sin_addr.s_addr = INADDR_ANY; //本机IP 地址
 
-    if (bind(listenFd, (sockaddr*)&addr, sizeof(addr)) < 0) {
+    if (bind(listenFd, reinterpret_cast<sockaddr *>(&addr), sizeof(addr)) < 0) {
         perror("绑定进程失败");
         exit(1);
     }
@@ -87,7 +87,7 @@ void TcpServer::start() {
 
 
     while (true) {
-        int n = epoll_wait(loopFd, events.data(), (int)events.size(), -1);
+        const int n = epoll_wait(loopFd, events.data(), static_cast<int>(events.size()), -1);
 
 
 #elif defined(USE_KQUEUE)
